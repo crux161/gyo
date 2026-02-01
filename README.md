@@ -5,7 +5,7 @@
 This project is based heavily on WGS, at this time (2/1/26) the codebase is entirely the work of **@fralonra**  -- that being said
 the codebase is 2-3 years out of date, and imho has several design flaw traps which I intend to rectify going forward.
 Given that the license is MIT, the original author must and shall be credited, however I intend to rewrite a substantial ammount of
-the codebase to suit the needs of projecto GYOSHO going forward. Share and share-a-like :3 
+the codebase to suit the needs of project GYOSHO going forward. Share and share-a-like :3 
 
 I will do a proper readme update when I've actually got some changes to report! 
 
