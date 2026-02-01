@@ -1,3 +1,24 @@
 [workspace]
 resolver = "2"
-members = ["crates/*"]
+
+# Explicitly list the renamed crates to prevent "package not found" errors
+members = [
+    "crates/gyo_core",      # formerly wgs_core
+    "crates/hanga",         # formerly wgs_runtime_wgpu
+    "crates/hanga_traits",  # formerly wgs_runtime_base
+]
+
+# Centralize dependencies to ensure version alignment across the engine
+[workspace.dependencies]
+wgpu = "22.1"            # The standard for all crates
+winit = "0.30"
+bytemuck = { version = "1.16", features = ["derive"] }
+anyhow = "1.0"
+zstd = "0.13"
+binrw = "0.14"
+serde = { version = "1.0", features = ["derive"] }
+
+# Link the internal crates so you don't have to specify paths everywhere
+gyo_core = { path = "./crates/gyo_core" }
+hanga = { path = "./crates/hanga" }
+hanga_traits = { path = "./crates/hanga_traits" }
