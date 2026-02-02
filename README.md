@@ -1,6 +1,7 @@
 # gyo
 
-**gyo** is the reference implementation and specification for the `.gyo` file format—the universal export container for Gyosho shaders.
+**gyo** is the reference implementation and specification for the `.gyo` file format—the universal export container for Gyosho shaders 
+which is **heavily** inspired by @fralonra's WGS file format. There has been some revamping of the codebase and a few nicities added which are relevant to the GYOSHO project. A majoriy of the code has been re-written but an extensive analysis of the WGS format was done and many thanks go to Fralonra <zoronlivingston@gmail.com> without whom this reborn codebase would not exist. 
 
 This repository serves as the "Rigid Spine" of the ecosystem, providing the strict schema, binary serialization logic, and a reference runtime (`hanga`) to verify that exported files can be correctly loaded and rendered.
 
