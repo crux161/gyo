@@ -48,6 +48,7 @@ The `hokusai` example is the compliance test for the `.gyo` format. It verifies 
 
 ```bash
 cargo run -p hanga --example hokusai
+```
 
 ### 🛠️ Technology Stack
 - Serialization: bincode (Metadata)
