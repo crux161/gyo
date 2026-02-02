@@ -1,3 +1,3 @@
-mod runtime;
+pub mod runtime;
+pub use runtime::Runtime;
 
-pub use runtime::RuntimeExt;

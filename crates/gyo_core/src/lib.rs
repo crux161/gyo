@@ -1,6 +1,6 @@
 use binrw::{binrw, BinRead, BinWrite};
 use serde::{Serialize, Deserialize};
-use std::io::{Read, Write};
+use std::io::Write;
 
 /// The Magic Signature: "GYO1"
 const MAGIC: &[u8; 4] = b"GYO1";
