@@ -1,77 +1,74 @@
-# Gyo (.gyo)
-![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+# gyo
 
-## TRANSITIONAL NOTICE: 
-This project is based heavily on WGS, at this time (2/1/26) the codebase is entirely the work of **@fralonra**  -- that being said
-the codebase is 2-3 years out of date, and imho has several design flaw traps which I intend to rectify going forward.
-Given that the license is MIT, the original author must and shall be credited, however I intend to rewrite a substantial ammount of
-the codebase to suit the needs of project GYOSHO going forward. Share and share-a-like :3 
+**gyo** is the reference implementation and specification for the `.gyo` file format—the universal export container for Gyosho shaders.
 
-I will do a proper readme update when I've actually got some changes to report! 
+This repository serves as the "Rigid Spine" of the ecosystem, providing the strict schema, binary serialization logic, and a reference runtime (`hanga`) to verify that exported files can be correctly loaded and rendered.
 
+---
 
-`gyo` is a binary format that represents pixel shader programs. Inspired by [Shadertoy](https://www.shadertoy.com/) but uses [WGSL](https://www.w3.org/TR/WGSL/) instead. It can now runs on native platforms and Web as well thanks to [wgpu-rs](https://wgpu.rs/).
+## 📦 The `.gyo` Format
 
-## File strcuture
+The primary purpose of this workspace is to define and maintain the `.gyo` binary standard.
 
-A `gyo` file mainly consists of three parts:
+- **Purpose:** To serve as a highly portable, compressed container for Gyosho shader code and assets.
+- **Structure:**
+    1.  **Header:** Magic bytes (`GYO1`) + Versioning.
+    2.  **Manifest:** A Bincode-serialized metadata block describing the contained assets (Shaders, Textures, Compute Kernels).
+    3.  **Payload:** A single Zstd-compressed blob containing the raw data.
 
-- **meta** which contains the meta info of the file, including:
-  - **name** project name.
-  - **texture_count** the count of the texture used by the file.
-  - **version** the wgs version used in the file.
-- **frag** the shader program in WGSL format.
-- **textures** the textures used by the file. Each texture consists of it's width and height and color data in 8bit RGBA format.
+---
 
-## Version
+## 🏗️ Workspace Structure
 
-The latest version of `gyo` is **gyo 1**.
+- **`crates/gyo_core`**
+    - The **Specification**.
+    - Contains the `GyoshoFile`, `Manifest`, and `AssetEntry` definitions.
+    - Implements the canonical `read` and `write` methods for the format.
 
-_Notice_ The very first version of `gyo` does not include `version` field and uses a `texture` function to render textures which is conflicting with the keyword in `GLSL`. Thus, this first version is not compatible with any later versions.
+- **`crates/hanga`** ("Print")
+    - The **Reference Runtime**.
+    - A minimal WGPU renderer designed solely to verify that `.gyo` files can be loaded, decompressed, and executed on the GPU.
+    - Includes the `ProjectLoader` for parsing the binary format at runtime.
 
-## How to write wgs
+- **`crates/hanga_traits`**
+    - Defines the `Runtime` trait contract for applications that wish to consume `.gyo` files.
 
-[gyo](https://github.com/crux161/gyo) is a cross-platform program helps you read and write your `gyo` files.
+---
 
-Maybe Web-based editors in the future.
+## 🌊 Verification: The Hokusai Benchmark
 
-### Uniforms
+The `hokusai` example is the compliance test for the `.gyo` format. It verifies the full round-trip pipeline:
 
-A `gyo` program receives six parameters passed from the runtime as a uniform variable:
+1.  **Generate:** Creates a valid `.gyo` file in memory from raw shader strings.
+2.  **Serialize:** Writes the binary format (Manifest + Compressed Payload) to a buffer.
+3.  **Deserialize:** Reads the buffer back using the `ProjectLoader`.
+4.  **Execute:** Renders the loaded shader to the screen to prove data integrity.
 
-- `cursor`: _vec2<f32>_
-  - The mouse position in pixels.
-- `mouse_down`: _u32_
-  - Whether the left button of the mouse is down.
-  - `0`: left button is up.
-  - `1`: left button is down.
-- `mouse_press`: _vec2<f32>_
-  - The mouse position in pixels when the left button is pressed.
-- `mouse_release`: _vec2<f32>_
-  - The mouse position in pixels when the left button is released.
-- `resolution`: _vec2<f32>_
-  - The resolution of the canvas in pixels (width \* height).
-- `time`: _f32_
-  - The elapsed time since the shader first ran, in seconds.
+### Running the Test
 
-You can use the above uniform like the following:
+```bash
+cargo run -p hanga --example hokusai
 
-```wgsl
-fn main_image(frag_color: vec4<f32>, frag_coord: vec2<f32>) -> vec4<f32> {
-    let uv = frag_coord / u.resolution;
-    let color = 0.5 + 0.5 * cos(u.time + uv.xyx + vec3(0.0, 2.0, 4.0));
-    return vec4(color, 1.0);
-}
-```
+### 🛠️ Technology Stack
+- Serialization: bincode (Metadata)
 
-### Built-in functions
+- Compression: zstd (Payload)
 
-`gyo` currently provides one built-in function:
+- Runtime: wgpu (v22.1) + winit (v0.30)
 
-- **image** helps you play with textures:
+### 📅 Development Status
+## Phase 1: Format Definition (Complete)
 
-  ```wgsl
-  fn image(t: texture_2d<f32>, spl: sampler, uv: vec2<f32>) -> vec4<f32>
-  ```
+[x] Binary Format Spec (GYO1)
 
-  Check this [example](https://github.com/crux161/gyo/tree/master/examples/examples/texture) for usage.
+[x] Core Serialization Library (gyo_core)
+
+[x] Reference Loader & Decompressor
+
+[x] Verification Runtime (hanga)
+
+## Next Steps
+
+[ ] Phase 2: Compute Shader Support in .gyo schema
+
+## License: MIT
